@@ -8,7 +8,7 @@ TEST_SIZE = 0.4
 
 
 def main():
-
+    # python shopping.py shopping.csv
     # Check command-line arguments
     if len(sys.argv) != 2:
         sys.exit("Usage: python shopping.py data")
@@ -54,12 +54,56 @@ def load_data(filename):
         - Region, an integer
         - TrafficType, an integer
         - VisitorType, an integer 0 (not returning) or 1 (returning)
+          Returning_Visitor, New_Visitor
         - Weekend, an integer 0 (if false) or 1 (if true)
 
     labels should be the corresponding list of labels, where each label
     is 1 if Revenue is true, and 0 otherwise.
+
+    First row:
+    ['0', '0', '0', '0', '1', '0', '0.2', '0.2', '0', '0', 'Feb', '1', '1', '1', '1', 'Returning_Visitor', 'FALSE', 'FALSE']
+
+    For example, the value of the first evidence list should be 
+    [0, 0.0, 0, 0.0, 1, 0.0, 0.2, 0.2, 0.0, 0.0, 1, 1, 1, 1, 1, 1, 0] 
+    and the value of the first label should be 0
     """
-    raise NotImplementedError
+    month = {'Jan':0, 'Feb':1, 'Mar':2, 'Apr':3, 'May':4, 'June':5, 'Jul':6,
+             'Aug':7, 'Sep':8, 'Oct':9, 'Nov':10, 'Dec':11}
+    
+    evidence = []
+    labels = []
+    k = 0
+    with open(filename) as f:
+        print(f)
+        reader = csv.reader(f)
+        next(reader)
+        for row in reader:
+            data = []
+            lab = 1 if row[-1] == 'TRUE' else 0
+            data.append(int(row[0]))
+            data.append(float(row[1]))
+            data.append(int(row[2]))
+            data.append(float(row[3]))
+            data.append(int(row[4]))
+            data.extend([float(row[i]) for i in range(5, 10)])
+            data.append(month[row[10]])
+            data.extend([int(row[i]) for i in range(11,15)])
+            data.append(1 if row[15]=='Returning_Visitor' else 0)
+            data.append(1 if row[16]=='TRUE' else 0)
+
+            evidence.append(data)
+            labels.append(lab)
+            if k < 2:
+                print(evidence)
+                print(labels)
+                print('- - - - - - - -')
+            k += 1
+    return (evidence, labels)
+            
+                
+        
+
+    
 
 
 def train_model(evidence, labels):
