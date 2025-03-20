@@ -8,6 +8,7 @@ TEST_SIZE = 0.4
 
 
 def main():
+    
     # python shopping.py shopping.csv
     # Check command-line arguments
     if len(sys.argv) != 2:
@@ -19,6 +20,7 @@ def main():
         evidence, labels, test_size=TEST_SIZE
     )
 
+    
     # Train model and make predictions
     model = train_model(X_train, y_train)
     predictions = model.predict(X_test)
@@ -29,7 +31,7 @@ def main():
     print(f"Incorrect: {(y_test != predictions).sum()}")
     print(f"True Positive Rate: {100 * sensitivity:.2f}%")
     print(f"True Negative Rate: {100 * specificity:.2f}%")
-
+    
 
 def load_data(filename):
     """
@@ -100,10 +102,6 @@ def load_data(filename):
             k += 1
     return (evidence, labels)
             
-                
-        
-
-    
 
 
 def train_model(evidence, labels):
@@ -111,7 +109,9 @@ def train_model(evidence, labels):
     Given a list of evidence lists and a list of labels, return a
     fitted k-nearest neighbor model (k=1) trained on the data.
     """
-    raise NotImplementedError
+    model = KNeighborsClassifier(n_neighbors=1)
+    model.fit(evidence, labels)
+    return model
 
 
 def evaluate(labels, predictions):
@@ -129,8 +129,26 @@ def evaluate(labels, predictions):
     representing the "true negative rate": the proportion of
     actual negative labels that were accurately identified.
     """
-    raise NotImplementedError
-
+    y_trues = 0
+    pred_trues = 0
+    #y_falses = len(y) - y_trues
+    pred_falses = 0
+    for i in range(len(labels)):
+        if labels[i] == 1:
+            y_trues += 1
+            if predictions[i] == 1:
+                pred_trues += 1
+        else: # y[i] == 0
+            if predictions[i] == 0:
+                pred_falses += 1
+    y_falses = len(labels) - y_trues
+    print('Sensitivity (True positive rate.)')
+    sensitivity = pred_trues/y_trues
+    print(sensitivity)
+    print('Specificity (True negative rate.)')
+    specifity = pred_falses/y_falses
+    print(specifity)
+    return (sensitivity, specifity)
 
 if __name__ == "__main__":
     main()
